@@ -2,10 +2,51 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>PokeRivals - Teste</title>
+    <title>PokeRivals - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; background-color: #f0f0f0; }
+        .container { background: white; padding: 40px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #4285F4; color: white; border: none; border-radius: 5px; }
+        button:hover { background-color: #357ae8; }
+    </style>
 </head>
 <body>
-    <h1>Meu PokeRivals está vivo!</h1>
-    <p>Consegui criar o primeiro arquivo no GitHub.</p>
+    <div class="container">
+        <h1>Bem-vindo ao PokeRivals</h1>
+        <p>Faça login para escolher seu Pokémon inicial.</p>
+        <button id="loginBtn">Entrar com Google</button>
+        <p id="status" style="margin-top: 20px; color: green;"></p>
+    </div>
+
+    <script>
+        // SUA URL DO SUPABASE
+        const SUPABASE_URL = 'https://xvjnsficyuqclejne.supabase.co';
+        
+        // COLE A CHAVE AQUI (Apague o texto entre as aspas e cole a chave que começa com sb_publishable_)
+        const SUPABASE_KEY = 'sb_publishable_30R1Unwdt7oWYjlqMoEHBg_7KQVHOEQ'; 
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: 'https://theDanielcode.github.io/PokeRivals/'
+                }
+            });
+            if (error) {
+                document.getElementById('status').textContent = 'Erro: ' + error.message;
+            }
+        });
+
+        // Verificar se o usuário já está logado
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+                document.getElementById('status').textContent = 'Logado como: ' + session.user.email;
+                document.getElementById('loginBtn').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
